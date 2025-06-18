@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Profile - College Events</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="profile-container">
+    <h1>Edit Your Profile</h1>
+    <form action="/profile" method="POST" novalidate>
+      <label for="name">Full Name:</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        value="<%= profile ? profile.name : '' %>"
+        placeholder="Your full name"
+        required
+      />
+
+      <label for="age">Age:</label>
+      <input
+        type="number"
+        name="age"
+        id="age"
+        min="1"
+        max="120"
+        value="<%= profile ? profile.age : '' %>"
+        placeholder="Your age"
+        required
+      />
+
+      <label for="year_of_study">Year of Study:</label>
+      <select name="year_of_study" id="year_of_study" required>
+        <% 
+          const years = ['1st Year', '2nd Year', '3rd Year', '4th Year', 'Other'];
+          years.forEach(year => {
+            const selected = profile && profile.year_of_study === year ? 'selected' : '';
+        %>
+          <option value="<%= year %>" <%= selected %>><%= year %></option>
+        <% }) %>
+      </select>
+
+      <label for="dob">Date of Birth:</label>
+      <input
+        type="date"
+        name="dob"
+        id="dob"
+        value="<%= profile ? profile.dob.toISOString().slice(0, 10) : '' %>"
+        required
+      />
+
+      <button type="submit" class="btn-submit">Save Profile</button>
+    </form>
+    <a href="/dashboard" class="back-link">Back to Dashboard</a>
+  </main>
+</body>
+</html>

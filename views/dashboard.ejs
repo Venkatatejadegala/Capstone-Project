@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard - College Events</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="dashboard-header">
+    <h1>
+      Welcome, 
+      <% const namePart = user.email.split('@')[0]; %>
+      <%= namePart %>
+    </h1>
+  </header>
+
+  <section class="user-info">
+    <h2>Your Personal Information</h2>
+    <form action="/profile" method="POST" class="user-info-form">
+  <p><strong>Email:</strong> <%= user.email %></p>
+
+  <div class="form-field">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" 
+           value="<%= user.student_details?.name || '' %>" required />
+  </div>
+
+  <div class="form-field">
+    <label for="age">Age:</label>
+    <input type="number" id="age" name="age" 
+           value="<%= user.student_details?.age || '' %>" required />
+  </div>
+
+  <div class="form-field">
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" 
+           value="<%= user.student_details?.dob?.toISOString().slice(0, 10) || '' %>" required />
+  </div>
+
+  <div class="form-field">
+    <label for="year_of_study">Year of Study:</label>
+    <select id="year_of_study" name="year_of_study" required>
+      <option value="1st Year" <%= user.student_details?.year_of_study === '1st Year' ? 'selected' : '' %>>1st Year</option>
+      <option value="2nd Year" <%= user.student_details?.year_of_study === '2nd Year' ? 'selected' : '' %>>2nd Year</option>
+      <option value="3rd Year" <%= user.student_details?.year_of_study === '3rd Year' ? 'selected' : '' %>>3rd Year</option>
+      <option value="4th Year" <%= user.student_details?.year_of_study === '4th Year' ? 'selected' : '' %>>4th Year</option>
+      <option value="Other" <%= user.student_details?.year_of_study === 'Other' ? 'selected' : '' %>>Other</option>
+    </select>
+  </div>
+
+  <div class="form-field">
+    <label for="college">College:</label>
+    <input type="text" name="college" id="college" 
+           value="<%= user.student_details?.college || '' %>" required />
+  </div>
+
+  <div class="form-field">
+    <label for="branch">Branch:</label>
+    <input type="text" name="branch" id="branch" 
+           value="<%= user.student_details?.branch || '' %>" required />
+  </div>
+
+  <div class="form-field">
+    <label for="year">Year:</label>
+    <input type="text" name="year" id="year" 
+           value="<%= user.student_details?.year || '' %>" required />
+  </div>
+
+  <button type="submit" class="btn-submit">Save Changes</button>
+</form>
+
+  </section>
+
+  <section class="events-buttons">
+    <button class="toggle-section-btn" data-target="registered-events-section">Registered Events</button>
+    <button class="toggle-section-btn" data-target="available-events-section">Available Events</button>
+  </section>
+
+  <section id="registered-events-section" class="events-section" hidden>
+    <h2>Your Registered Events</h2>
+    <% if (registeredEvents.length === 0) { %>
+      <p>You have not registered for any events yet.</p>
+    <% } else { %>
+      <ul>
+        <% registeredEvents.forEach(event => { %>
+          <li>
+            <strong><%= event.name %></strong><br />
+            <%= event.description %>
+          </li>
+        <% }) %>
+      </ul>
+    <% } %>
+  </section>
+
+  <section id="available-events-section" class="events-section" hidden>
+    <h2>Available Events for Registration</h2>
+    <% if (availableEvents.length === 0) { %>
+      <p>No new events available at the moment.</p>
+    <% } else { %>
+      <% availableEvents.forEach(event => { %>
+        <article class="event-card">
+          <h3><%= event.name %></h3>
+          <p><%= event.description %></p>
+          <form action="/register/<%= event.id %>" method="POST">
+            <button type="submit" class="btn-register">Register</button>
+          </form>
+        </article>
+      <% }); %>
+    <% } %>
+  </section>
+
+  <footer class="dashboard-footer">
+    <form action="/logout" method="POST">
+      <button type="submit" class="logout-btn">Logout</button>
+    </form>
+  </footer>
+
+  <script>
+    const toggleButtons = document.querySelectorAll('.toggle-section-btn');
+    const registeredSection = document.getElementById('registered-events-section');
+    const availableSection = document.getElementById('available-events-section');
+
+    toggleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        registeredSection.hidden = target !== 'registered-events-section' ? true : !registeredSection.hidden;
+        availableSection.hidden = target !== 'available-events-section' ? true : !availableSection.hidden;
+      });
+    });
+  </script>
+</body>
+</html>
